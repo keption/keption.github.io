@@ -1,20 +1,59 @@
 <!DOCTYPE html>
 <!DOCTYPE html>
 <html>
+    <head>
+    <title> AR Invitation </title>
+    <meta name="viewport" content="width=device-width,height=device-height">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <script src="https://aframe.io/releases/1.0.0/aframe.min.js"></script>
     <!-- we import arjs version without NFT but with marker + location based support -->
     <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+
+    <script>
+                       
+        // Invitation Video Handler
+        
+        AFRAME.registerComponent('video-vidhandler', {
+            init: function() {
+        console.log('video init entered');
+                this.toggle = false;
+                this.vid = document.querySelector("#invitation");
+                this.vid.pause();
+            },
+            tick: function() {
+                if (this.el.object3D.visible == true) {
+                    if (!this.toggle) {
+                        this.toggle = true;
+                        this.vid.play();
+                    }
+                } else {
+                    this.toggle = false;
+                    this.vid.pause();
+                }
+            }
+        });
+    
+    </script>
+    </head>
     <body style="margin : 0px; overflow: hidden;">
-        <a-scene embedded arjs>
-            <a-marker-camera preset="custom" type="pattern" url="Pattern/bmw.patt"></a-marker-camera>
-            <a-assets>
-                <video id="bmw_vid" autoplay loop="true" src="video/bmw.mp4"></video>
-              </a-assets>
+        <a-scene id="scene" arjs='trackingMethod: best; debugUIEnabled: false;' vr-mode-ui="enabled: false" ar-template >
             
-              <!-- Using the asset management system. -->
-              <a-video src="#bmw_vid" width="16" height="9" position="0 0 -20"></a-video>
-        </a-marker>
-        <a-entity camera></a-entity>
+            <a-assets>
+                <!-- Invitation  Video -->
+                
+                <video preload="none" id="invitation" response-type="arraybuffer" loop="false" crossorigin webkit-playsinline playsinline controls>
+                    <source  src="video/bmw.mp4">
+                </video>
+        
+            </a-assets>
+        
+            <!-- Invitation Video Marker -->
+        
+            <a-marker id="marker1" type='pattern' url='Pattern/bmw.patt' video-vidhandler>
+                <a-plane scale = "4 2" position='0 0.1 0' rotation="-90 0 0" material='transparent:true;src:#invitation' controls></a-plane>
+            </a-marker>
+            <!-- Camera -->
+            <a-entity camera></a-entity>
         </a-scene>
     </body>
 </html>
